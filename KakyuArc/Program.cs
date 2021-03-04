@@ -1,4 +1,5 @@
-﻿using System;
+﻿// #define USE_SORT_ORDER
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -97,13 +98,18 @@ namespace KakyuArc
 
                 case "-p":
                     var outputPath = args.Length >= 3 ? args[2] : path + ".ARC";
-                    var inputFilePaths = Directory.GetFiles(path)
+                    var inputFilePaths =
+#if USE_SORT_ORDER
+                        Directory.GetFiles(path)
                         .Where(x => IsPackableFile(x))
                         .Select(x => GetPackOrderByFileName(x))
                         .OrderBy(x => x.Order)
                         .ThenBy(x => x.Name)
                         .Select(x => x.Name)
                         .ToArray();
+#else
+                        Directory.GetFiles(path);
+#endif
 
                     using (var stream = new FileStream(outputPath, FileMode.Create, FileAccess.Write))
                     using (var writer = new BinaryWriter(stream))
@@ -186,6 +192,7 @@ namespace KakyuArc
             return 0;
         }
 
+#if USE_SORT_ORDER
         private static OrderData GetPackOrderByFileName(string path)
         {
             // "name@order.ext"
@@ -203,6 +210,7 @@ namespace KakyuArc
 
             return new OrderData(path, order);
         }
+#endif
 
         private static bool IsPackableFile(string path)
         {
