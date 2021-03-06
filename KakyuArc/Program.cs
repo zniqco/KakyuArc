@@ -74,8 +74,6 @@ namespace KakyuArc
                             switch (extension.ToUpper())
                             {
                                 case ".MES":
-                                    Array.Resize(ref bytes, bytes.Length - 1);
-
                                     bytes = ElfLZSS.Decompress(bytes);
 
                                     break;
@@ -148,8 +146,6 @@ namespace KakyuArc
                             {
                                 case ".MES":
                                     bytes = ElfLZSS.Compress(bytes);
-
-                                    Array.Resize(ref bytes, bytes.Length + 1);
 
                                     break;
                             }
